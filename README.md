@@ -1,14 +1,14 @@
-# chatgpt
+# groq
 
-A CLI written in [V](https://vlang.io) for [ChatGPT](https://openai.com/blog/chatgpt).
+A CLI written in [V](https://vlang.io) for the [Groq](https://groq.com) AI chat service.
 
 ## Building
 
 After installing V, run `make`.
 
-## Usgae
+## Usage
 
-Run `./chatgpv login` to add your OpenAI API key to the macOS Keychain.
-Then run `./chatgpv <prompt>` to talk to ChatGPT. e.g. `./chatgpv What is the average air speed velocity of an unladen swallow?`.
-Chat sessions are saved per terminal session in an SQLite database at `~/.local/share/chatgpt/db`
-so that you can continue the conversation, e.g. `./chatgpv Can they carry coconuts?`.
+Run `./groq` to add your Groq API key to the macOS Keychain.
+Then run `./groq <prompt>` to talk to Groq. e.g. `./groq What is the average air speed velocity of an unladen swallow?`.
+Chat sessions are saved per terminal session in an SQLite database at `~/.local/share/groq/db`
+so that you can continue the conversation, e.g. `./groq Can they carry coconuts?`.
