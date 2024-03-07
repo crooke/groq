@@ -216,9 +216,9 @@ struct Usage {
 	total_tokens      int
 }
 
-[table: 'convos']
+@[table: 'convos']
 struct Conversation {
-	id string [primary; sql_type: 'TEXT']
+	id string @[primary; sql_type: 'TEXT']
 mut:
-	messages string [sql_type: 'TEXT']
+	messages string @[sql_type: 'TEXT']
 }
