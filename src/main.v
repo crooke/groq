@@ -18,19 +18,19 @@ fn C.get_api_key() &char
 
 fn main() {
 	mut app := cli.Command{
-		name: 'chatgpt'
+		name:        'chatgpt'
 		description: "A command-line interface to Groq's Chat API"
-		execute: fn (cmd cli.Command) ! {
+		execute:     fn (cmd cli.Command) ! {
 			api_key := get_api_key()
-			if api_key == "" {
+			if api_key == '' {
 				println('Missing Groq API Key. Try the login command.')
 				exit(1)
 			}
 			chat(api_key)!
 		}
-		commands: [
+		commands:    [
 			cli.Command{
-				name: 'login'
+				name:    'login'
 				execute: fn (cmd cli.Command) ! {
 					login()!
 				}
@@ -68,14 +68,14 @@ fn chat(api_key string) ! {
 	user_prompt := os.args[1..].join(' ')
 
 	user_message := Message{
-		role: 'user'
+		role:    'user'
 		content: user_prompt
 	}
 
 	messages << user_message
 
 	request := ChatRequest{
-		model: 'mixtral-8x7b-32768' // or llama2-70b-4096
+		model:    'llama-3.1-8b-instant'
 		messages: messages
 	}
 
@@ -98,7 +98,7 @@ fn send_chatgpt_message(request ChatRequest, api_key string) !ChatResponse {
 
 	response := http.fetch(http.FetchConfig{
 		method: .post
-		url: 'https://api.groq.com/openai/v1/chat/completions'
+		url:    'https://api.groq.com/openai/v1/chat/completions'
 		header: headers
 		// data: '{"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "${prompt}"}]}'
 		data: json.encode(request)
@@ -137,7 +137,7 @@ fn get_current_convo(db sqlite.DB) ![]Message {
 
 	mut convo := if convos.len == 0 {
 		Conversation{
-			id: convo_id
+			id:       convo_id
 			messages: '[]'
 		}
 	} else {
@@ -150,7 +150,7 @@ fn get_current_convo(db sqlite.DB) ![]Message {
 
 fn save_current_convo(db sqlite.DB, messages []Message) ! {
 	mut convo := Conversation{
-		id: current_convo_id()
+		id:       current_convo_id()
 		messages: '[]'
 	}
 
