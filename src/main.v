@@ -18,22 +18,30 @@ fn C.get_api_key() &char
 
 fn main() {
 	mut app := cli.Command{
-		name:        'chatgpt'
+		name:        'groq'
 		description: "A command-line interface to Groq's Chat API"
 		execute:     fn (cmd cli.Command) ! {
+			question := cmd.args.join(' ')
+			model := cmd.flags.get_string('model')!
 			api_key := get_api_key()
-			if api_key == '' {
-				println('Missing Groq API Key. Try the login command.')
-				exit(1)
-			}
-			chat(api_key)!
+			chat(question, model, api_key)!
 		}
 		commands:    [
 			cli.Command{
-				name:    'login'
-				execute: fn (cmd cli.Command) ! {
+				name:        'login'
+				description: 'Stores groq API key in macOS keychain'
+				execute:     fn (cmd cli.Command) ! {
 					login()!
 				}
+			},
+		]
+		flags:       [
+			cli.Flag{
+				name:          'model'
+				abbrev:        'm'
+				description:   'Language model to use'
+				flag:          .string
+				default_value: ['llama-3.1-8b-instant']
 			},
 		]
 	}
@@ -56,16 +64,18 @@ fn get_api_key() string {
 	// TODO: free memory??
 	result := C.get_api_key()
 	api_key := unsafe { cstring_to_vstring(result) }
+	if api_key == '' {
+		println('Missing Groq API Key. Try the login command.')
+		exit(1)
+	}
 	return api_key
 }
 
-fn chat(api_key string) ! {
+fn chat(user_prompt string, model string, api_key string) ! {
 	db := get_db()!
 
 	// Get the previous conversation messages from this terminal session
 	mut messages := get_current_convo(db)!
-
-	user_prompt := os.args[1..].join(' ')
 
 	user_message := Message{
 		role:    'user'
@@ -74,10 +84,7 @@ fn chat(api_key string) ! {
 
 	messages << user_message
 
-	request := ChatRequest{
-		model:    'llama-3.1-8b-instant'
-		messages: messages
-	}
+	request := ChatRequest{model, messages}
 
 	response := send_chatgpt_message(request, api_key)!
 
